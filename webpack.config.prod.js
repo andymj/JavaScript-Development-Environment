@@ -3,19 +3,27 @@ import webpack from 'webpack';
 import htmlWebpackPlugin from 'html-webpack-plugin';
 
 export default {
-  debug: true,
-  devtool: 'source-map',
-  noInfo: false,
-  entry: [
-    path.resolve(__dirname, 'src/index')
-  ],
-  target: 'web',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: '/',
-    filename: 'bundle.js'
-  },
+    debug: true,
+    devtool: 'source-map',
+    noInfo: false,
+    entry: {
+        vendor: path.resolve(__dirname, 'src/vendor'),
+        main: path.resolve(__dirname, 'src/index')
+    },
+    target: 'web',
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        publicPath: '/',
+        filename: '[name].js'                   // use the name defined in the entry point
+    },
   plugins: [
+      // Use CommonsChunkPlugin to create separate bundle
+      // of vendor libraries so that they are cached separately.
+      new webpack.optimize.CommonsChunkPlugin({
+          name: 'vendor'
+      }),
+
+
       // create html file that includes reference to bundle JS
       new htmlWebpackPlugin({
           template: 'src/index.html',
